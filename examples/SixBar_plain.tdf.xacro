@@ -1,7 +1,5 @@
-<!-- This way of describing might be more readable,
-     since we can specify meaningful ids to nodes.
--->
-<tdf>
+<?xml version="1.0"?>
+<tdf xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- it is allowed to have several <cables> tags
        with different stiffness and rest_length attributes -->
  <rod_class id="rod1" stiffness="100" rest_length="0.5" />
@@ -45,60 +43,6 @@
    <rod class="rod1" node1="10" node2="9" />
    <rod class="rod1" node1="12" node2="11" />
  </composition>
-
-  <initial_positions>
-    <node id="1" xyz="-0.25 0 -0.5" />
-    <node id="2" xyz="-0.25 0 0.5" />
-    <node id="3" xyz="0.25 0 -0.5" />
-    <node id="4" xyz="0.25 0 0.5" />
-
-    <node id="5" xyz="0 -0.5 -0.25" />
-    <node id="6" xyz="0 0.5 -0.25" />
-    <node id="7" xyz="0 -0.5 0.25" />
-    <node id="8" xyz="0 0.5 0.25" />
-
-    <node id="10" xyz="-0.5 -0.25 0" />
-    <node id="11" xyz="0.5 -0.25 0" />
-    <node id="12" xyz="-0.5 0.25 0" />
-    <node id="13" xyz="0.5 0.25 0" />
-  </initial_positions>
-</tdf>
-
-
-
-<!-- Another way to describe same thing,
-     is to define a macro and then compose them.
-
-     Some of the cables and rods are going to written several
-     times, since pentagons overlap. This is alright, as long as
-     these definitions are consistent.
--->
-<tdf>
-  <rod_class id="rod1" stiffness="100" rest_length="0.5" />
-  <cable_class id="cable1" stiffness="10" rest_length="0.25" />
-
-  <xacro:macro name="pentagon" params="A1 A2 B1 B2 С1 С2">
-    <rod class="rod1" node1="${A1}" node2="${A2}" />
-    <rod class="rod1" node1="${B1}" node2="${B2}" />
-    <cable class="cable1" node1="${A1}" node2="${C1}" />
-    <cable class="cable1" node1="${A1}" node2="${B1}" />
-    <cable class="cable1" node1="${A2}" node2="${B1}" />
-    <cable class="cable1" node1="${A2}" node2="${C2}" />
-    <cable class="cable1" node1="${B1}" node2="${C1}" />
-    <cable class="cable1" node1="${B1}" node2="${C2}" />
-    <cable class="cable1" node1="${B2}" node2="${C1}" />
-    <cable class="cable1" node1="${B2}" node2="${C2}" />
-  </xacro:macro>
-
-  <composition>
-    <!-- macro expansions can be intermixed with direct
-        <cable> and <rod> entries.
-    -->
-    <xacro:pentagon A1="11" A2="12" B1="6" B2="5" C1="1" C2="3" />
-    <xacro:pentagon A1="10" A2="9" B1="5" B2="6" C1="3" C2="1" />
-    <xacro:pentagon A1="8" A2="7" B1="4" B2="3" C1="12" C2="10" />
-    <xacro:pentagon A1="7" A2="8" B1="2" B2="1" C1="9" C2="11" />
-  </composition>
 
   <initial_positions>
     <node id="1" xyz="-0.25 0 -0.5" />
