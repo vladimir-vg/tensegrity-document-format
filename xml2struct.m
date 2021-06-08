@@ -140,6 +140,8 @@ name = char(getNodeName(theNode));
 name = strrep(name, '-', '_dash_');
 name = strrep(name, ':', '_colon_');
 name = strrep(name, '.', '_dot_');
+
+%% EDITED:
 %% We don't need this escape,
 %% since we don't use tags or attributes starting with _
 %% and without this user code is less confusing
