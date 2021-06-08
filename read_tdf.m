@@ -40,36 +40,45 @@ function Res = read_tdf(filepath)
   Res.rest_lengths = zeros(n, n)
   Res.stiffness_coefs = zeros(n, n)
 
-  for k = 1:length(root.tdf.composition.rod)
-    i = find(sorted_ids == root.tdf.composition.rod{k}.Attributes.node1)
-    j = find(sorted_ids == root.tdf.composition.rod{k}.Attributes.node2)
+  [c, c_stiffness, c_rest_lengths] = populate_matrices(n, rod_class, root.tdf.composition.rod)
+  [r, r_stiffness, r_rest_lengths] = populate_matrices(n, cable_class, root.tdf.composition.cable)
 
-    class_name = root.tdf.composition.rod{k}.Attributes.class
-    stiffness = rod_class.(class_name).stiffness
-    rest_length = rod_class.(class_name).rest_length
+  Res.Cables = c
+  Res.Rods = r
+  Res.stiffness_coefs = c_stiffness + r_stiffness
+  Res.rest_lengths = c_rest_lengths + r_rest_lengths
+  Res.nodes_position = zeros(3, n)
 
-    Res.Cables(i,j) = 1
-    Res.Cables(j,i) = 1
-    Res.stiffness_coefs(i,j) = stiffness
-    Res.stiffness_coefs(j,i) = stiffness
-    Res.rest_lengths(i,j) = rest_length
-    Res.rest_lengths(j,i) = rest_length
+  %% Read initial nodes positions
+
+  for i = 1:length(root.tdf.initial_positions.node)
+    id = root.tdf.initial_positions.node{i}.Attributes.id
+    idx = find(sorted_ids == id)
+    coords = strsplit(root.tdf.initial_positions.node{i}.Attributes.xyz, ' ')
+    Res.nodes_position(1, idx) = str2num(coords{1})
+    Res.nodes_position(2, idx) = str2num(coords{2})
+    Res.nodes_position(3, idx) = str2num(coords{3})
   end
 
-  for k = 1:length(root.tdf.composition.cable)
-    i = find(sorted_ids == root.tdf.composition.cable{k}.Attributes.node1)
-    j = find(sorted_ids == root.tdf.composition.cable{k}.Attributes.node2)
+  function [m, m_stiffness, m_rest_lengths] = populate_matrices(n, class, elements)
+    m = zeros(n, n)
+    m_stiffness = zeros(n, n)
+    m_rest_lengths = zeros(n, n)
+    for k = 1:length(elements)
+      i = find(sorted_ids == elements{k}.Attributes.node1)
+      j = find(sorted_ids == elements{k}.Attributes.node2)
 
-    class_name = root.tdf.composition.cable{k}.Attributes.class
-    stiffness = cable_class.(class_name).stiffness
-    rest_length = cable_class.(class_name).rest_length
+      class_name = elements{k}.Attributes.class
+      stiffness = class.(class_name).stiffness
+      rest_length = class.(class_name).rest_length
 
-    Res.Rods(i,j) = 1
-    Res.Rods(j,i) = 1
-    Res.stiffness_coefs(i,j) = stiffness
-    Res.stiffness_coefs(j,i) = stiffness
-    Res.rest_lengths(i,j) = rest_length
-    Res.rest_lengths(j,i) = rest_length
+      m(i,j) = 1
+      m(j,i) = 1
+      m_stiffness(i,j) = stiffness
+      m_stiffness(j,i) = stiffness
+      m_rest_lengths(i,j) = rest_length
+      m_rest_lengths(j,i) = rest_length
+    end
   end
 
   function result = collect_attributes(elements)
