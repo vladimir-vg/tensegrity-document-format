@@ -35,19 +35,16 @@ function Res = read_tdf(filepath)
   %% Now we need to walk <cable> and <rod> and populate resulting matrices
 
   n = length(sorted_ids)
-  Res.Cables = zeros(n, n)
-  Res.Rods = zeros(n, n)
-  Res.rest_lengths = zeros(n, n)
-  Res.stiffness_coefs = zeros(n, n)
-
-  [c, c_stiffness, c_rest_lengths] = populate_matrices(n, rod_class, root.tdf.composition.rod)
-  [r, r_stiffness, r_rest_lengths] = populate_matrices(n, cable_class, root.tdf.composition.cable)
+  [r, r_stiffness, r_rest_lengths] = populate_matrices(n, rod_class, root.tdf.composition.rod)
+  [c, c_stiffness, c_rest_lengths] = populate_matrices(n, cable_class, root.tdf.composition.cable)
 
   Res.Cables = c
   Res.Rods = r
-  Res.stiffness_coefs = c_stiffness + r_stiffness
+  Res.Connectivity = c + r
+  Res.stiffness_coef = c_stiffness + r_stiffness
   Res.rest_lengths = c_rest_lengths + r_rest_lengths
   Res.nodes_position = zeros(3, n)
+  Res.node_ids = sorted_ids
 
   %% Read initial nodes positions
 

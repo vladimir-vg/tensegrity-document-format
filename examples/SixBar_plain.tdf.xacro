@@ -44,20 +44,20 @@
    <rod class="rod1" node1="12" node2="11" />
  </composition>
 
-  <initial_positions>
-    <node id="1" xyz="-0.25 0 -0.5" />
-    <node id="2" xyz="-0.25 0 0.5" />
-    <node id="3" xyz="0.25 0 -0.5" />
-    <node id="4" xyz="0.25 0 0.5" />
+ <initial_positions>
+   <node id="1" xyz="-0.25 0 -0.5"/>
+   <node id="2" xyz="-0.25 0 0.5"/>
+   <node id="3" xyz="0.25 0 -0.5"/>
+   <node id="4" xyz="0.25 0 0.5"/>
 
-    <node id="5" xyz="0 -0.5 -0.25" />
-    <node id="6" xyz="0 0.5 -0.25" />
-    <node id="7" xyz="0 -0.5 0.25" />
-    <node id="8" xyz="0 0.5 0.25" />
+   <node id="5" xyz="0 -0.5 -0.25"/>
+   <node id="6" xyz="0 0.5 -0.25"/>
+   <node id="7" xyz="0 -0.5 0.25"/>
+   <node id="8" xyz="0 0.5 0.25"/>
 
-    <node id="10" xyz="-0.5 -0.25 0" />
-    <node id="11" xyz="0.5 -0.25 0" />
-    <node id="12" xyz="-0.5 0.25 0" />
-    <node id="13" xyz="0.5 0.25 0" />
-  </initial_positions>
+   <node id="9" xyz="-0.5 -0.25 0"/>
+   <node id="10" xyz="0.5 -0.25 0"/>
+   <node id="11" xyz="-0.5 0.25 0"/>
+   <node id="12" xyz="0.5 0.25 0"/>
+ </initial_positions>
 </tdf>
