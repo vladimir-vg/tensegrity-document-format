@@ -4,11 +4,13 @@ import deepdiff
 import itertools
 import pytest
 
+# TODO: matlab starts really slow. Instead of reading single file on each matlab run
+# we could rewrite tdf_to_json_dump.m to read several files at once
+
 # We need to test that for several files output matrices are same.
 # Also need to check that it is the same for both python and matlab reader
 
-MATLAB_EXEC_PATH = '/mnt/external-hdd-seagate-ultra-slim/matlab_installation/bin/matlab'
-# MATLAB_EXEC_PATH = '/home/vg/bin/matlab'
+MATLAB_EXEC_PATH = os.environ['MATLAB_EXEC_PATH']
 
 # All files in same list should produce same output,
 # since they describe same structure
