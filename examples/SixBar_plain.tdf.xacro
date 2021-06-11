@@ -19,7 +19,7 @@
    <cable class="cable1" node1="9" node2="1" />
    <cable class="cable1" node1="9" node2="2" />
    <cable class="cable1" node1="9" node2="5" />
-   <cable class="cable1" node1="9" node2="6" />
+   <cable class="cable1" node1="9" node2="7" />
 
    <cable class="cable1" node1="10" node2="3" />
    <cable class="cable1" node1="10" node2="4" />

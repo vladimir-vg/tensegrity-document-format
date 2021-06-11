@@ -1,1 +1,3 @@
-xacro==1.13.3 
+xacro==1.13.3
+pytest==6.2.4
+deepdiff==5.5.0
