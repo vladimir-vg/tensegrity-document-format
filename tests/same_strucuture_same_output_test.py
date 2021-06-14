@@ -4,6 +4,8 @@ import deepdiff
 import itertools
 import pytest
 
+import tdf
+
 # TODO: matlab starts really slow. Instead of reading single file on each matlab run
 # we could rewrite tdf_to_json_dump.m to read several files at once
 
@@ -43,7 +45,7 @@ def matlab_read(path):
         return json.loads(json_text)
 
 def python_read(path):
-    raise 'NotImplemented'
+    return tdf.read_tdf(path)
 
 
 
