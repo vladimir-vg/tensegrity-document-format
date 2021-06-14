@@ -1,6 +1,6 @@
 function tdf_to_json_dump(path)
   %% add root directory to load path, so function read_tdf could be loaded
-  userpath(strcat(pwd, '/..'));
+  userpath(strcat(pwd, '/../matlab_src'));
 
   robot = read_tdf(path);
   txt = jsonencode(robot);
