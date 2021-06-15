@@ -1,2 +1,2 @@
 tests/generated_data/*.tdf
-tests/__pycache__
+**/__pycache__

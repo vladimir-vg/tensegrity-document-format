@@ -24,8 +24,8 @@ def read_tdf(path):
     rod_class = collect_attributes(root.findall('rod_class'))
     cable_class = collect_attributes(root.findall('cable_class'))
 
-    r, r_stiffness, r_rest_lengths = populate_matrices(n, rod_class, rods)
-    c, c_stiffness, c_rest_lengths = populate_matrices(n, cable_class, cables)
+    r, r_stiffness, r_rest_lengths = populate_matrices(n, node_ids, rod_class, rods)
+    c, c_stiffness, c_rest_lengths = populate_matrices(n, node_ids, cable_class, cables)
 
     robot = {}
     robot['Cables'] = c
@@ -38,11 +38,11 @@ def read_tdf(path):
 
     positions = root.findall('initial_positions')[0].findall('node')
     for pos in positions:
-        idx = nodes_ids.index(pos.attrib['id'])
+        idx = node_ids.index(pos.attrib['id'])
         [x, y, z] = map(float, pos.attrib['xyz'].split())
-        robot['nodes_position'][0, idx] = x
-        robot['nodes_position'][1, idx] = x
-        robot['nodes_position'][2, idx] = x
+        robot['nodes_position'][0][idx] = x
+        robot['nodes_position'][1][idx] = y
+        robot['nodes_position'][2][idx] = z
 
     return robot
 
@@ -55,7 +55,7 @@ def collect_attributes(class_elements):
         }
     return result
 
-def populate_matrices(n, el_class, elements):
+def populate_matrices(n, node_ids, el_class, elements):
     m = np.zeros((n, n))
     m_stiffness = np.zeros((n, n))
     m_rest_lengths = np.zeros((n, n))

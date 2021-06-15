@@ -4,7 +4,7 @@ import deepdiff
 import itertools
 import pytest
 
-import tdf
+import py_tdf.tdf as tdf
 
 # TODO: matlab starts really slow. Instead of reading single file on each matlab run
 # we could rewrite tdf_to_json_dump.m to read several files at once
@@ -45,7 +45,16 @@ def matlab_read(path):
         return json.loads(json_text)
 
 def python_read(path):
-    return tdf.read_tdf(path)
+    robot = tdf.read_tdf(path)
+    return {
+        'Cables': robot['Cables'].tolist(),
+        'Rods': robot['Rods'].tolist(),
+        'Connectivity': robot['Connectivity'].tolist(),
+        'stiffness_coef': robot['stiffness_coef'].tolist(),
+        'rest_lengths': robot['rest_lengths'].tolist(),
+        'nodes_position': robot['nodes_position'].tolist(),
+        'node_ids': robot['node_ids'],
+    }
 
 
 
@@ -59,15 +68,17 @@ def input_paths(request):
 @pytest.fixture
 def all_json_dump_pair_combinations(input_paths):
     # TODO: add outputs from python version of reader to comparison
-    output_values = [(filename, matlab_read(path)) for (filename, path) in input_paths]
-    pairs = itertools.combinations(output_values, 2)
+    output_values1 = [(filename, 'matlab', matlab_read(path)) for (filename, path) in input_paths]
+    # output_values1 = []
+    output_values2 = [(filename, 'python', python_read(path)) for (filename, path) in input_paths]
+    pairs = itertools.combinations(output_values1 + output_values2, 2)
     return pairs
 
 
 
 def test_different_files_have_same_output(all_json_dump_pair_combinations):
     for (item1, item2) in all_json_dump_pair_combinations:
-        (filename1, value1) = item1
-        (filename2, value2) = item2
-        diff = deepdiff.DeepDiff(value1, value2)
+        (filename1, _, value1) = item1
+        (filename2, _, value2) = item2
+        diff = deepdiff.DeepDiff(value1, value2, ignore_numeric_type_changes=True)
         assert (len(diff) == 0), f'{filename1} and {filename2} have different output\n{diff.pretty()}'

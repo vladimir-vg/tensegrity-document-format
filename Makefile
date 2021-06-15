@@ -6,7 +6,7 @@ deps:
 	pip3 install -r requirements.txt
 
 test: generate_tdfs_from_examples
-	MATLAB_EXEC_PATH=$(MATLAB_EXEC_PATH) pytest
+	PYTHONPATH=`pwd` MATLAB_EXEC_PATH=$(MATLAB_EXEC_PATH) pytest
 
 generate_tdfs_from_examples: \
 	tests/generated_data/SixBar_plain.tdf \
