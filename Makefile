@@ -22,3 +22,10 @@ tests/generated_data/SixBar_pentagon.tdf: examples/SixBar_pentagon.tdf.xacro
 	xacro examples/SixBar_pentagon.tdf.xacro > tests/generated_data/SixBar_pentagon.tdf
 
 .PHONY: deps test generate_tdfs_from_examples
+
+
+# write command here, just not to lose it
+# TODO: turn it into makefile command, specify path to NTRT as constant
+#
+# PYTHONPATH=`pwd` python3 ./py_tdf/tdf2ntrt_yaml.py tests/generated_data/SixBar_diamond.tdf  > SixBar_diamond.yaml
+# ../NTRTsim/build/yamlbuilder/BuildModel ./SixBar_diamond.yaml
