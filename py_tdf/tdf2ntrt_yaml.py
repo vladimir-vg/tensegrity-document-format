@@ -24,13 +24,14 @@ def tdf2ntrt_yaml(tdf_path):
 
     for pos in positions:
         id = f"{ID_PREFIX}{pos.attrib['id']}"
-        result['nodes'][id] = list(map(float, pos.attrib['xyz'].split()))
+        [x, y, z] = list(map(float, pos.attrib['xyz'].split()))
+        result['nodes'][id] = [x+10, y+10, z+10]
 
     rods = root.findall('composition')[0].findall('rod')
     for el in rods:
         id1 = f"{ID_PREFIX}{el.attrib['node1']}"
         id2 = f"{ID_PREFIX}{el.attrib['node2']}"
-        class_name = el.attrib['class']
+        class_name = f"{ID_PREFIX}{el.attrib['class']}"
         result['pair_groups'][class_name] = result['pair_groups'].get(class_name, [])
         result['pair_groups'][class_name].append([id1, id2])
 
@@ -38,7 +39,7 @@ def tdf2ntrt_yaml(tdf_path):
     for el in cables:
         id1 = f"{ID_PREFIX}{el.attrib['node1']}"
         id2 = f"{ID_PREFIX}{el.attrib['node2']}"
-        class_name = el.attrib['class']
+        class_name = f"{ID_PREFIX}{el.attrib['class']}"
         result['pair_groups'][class_name] = result['pair_groups'].get(class_name, [])
         result['pair_groups'][class_name].append([id1, id2])
 
@@ -51,6 +52,8 @@ def tdf2ntrt_yaml(tdf_path):
                 # as far as I understand, you do not specify rest_length
                 # for rod in NTRT. Didn't find such config parameter.
                 # I assume it is computed from node positions
+                'density': 0.688,
+                'radius': 0.05,
             }
         }
     for el in root.findall('cable_class'):
@@ -59,6 +62,8 @@ def tdf2ntrt_yaml(tdf_path):
             'class': 'tgBasicActuatorInfo',
             'parameters': {
                 'stiffness': float(el.attrib['stiffness']),
+                # 'damping': 10,
+                # 'pretension': 1000,
                 # 'minRestLength': float(el.attrib['stiffness']),
             }
         }
