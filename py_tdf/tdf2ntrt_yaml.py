@@ -15,7 +15,7 @@ def tdf2ntrt_yaml(tdf_path):
     tree = ElementTree.parse(tdf_path)
     root = tree.getroot()
 
-    validate(root)
+    validate(tree)
 
     # just map it to JSON-like structure, no additional checks
     # assuming that tdf is correct

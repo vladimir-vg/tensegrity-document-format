@@ -3,15 +3,21 @@ import numpy as np
 
 from py_tdf.validate import validate
 
-# for now just return dictionary similar to interface in matlab
-# probably it might be more convenient to add some kind of OO interface
-# we'll see
-def read_tdf(path):
+def from_path(path):
     tree = ElementTree.parse(path)
     root = tree.getroot()
-
     validate(root)
+    return read_tdf(root)
 
+def from_string(content):
+    root = ElementTree.fromstring(content)
+    validate(root)
+    return read_tdf(root)
+
+# for now just return dictionary similar to interface in matlab
+# probably it might be more convenient to add some kind of OO interface.
+# We'll see
+def read_tdf(root):
     rods = root.findall('composition')[0].findall('rod')
     cables = root.findall('composition')[0].findall('cable')
 

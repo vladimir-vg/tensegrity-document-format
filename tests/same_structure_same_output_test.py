@@ -45,7 +45,7 @@ def matlab_read(path):
         return json.loads(json_text)
 
 def python_read(path):
-    robot = py_tdf.read_tdf(path)
+    robot = py_tdf.from_path(path)
     # python tdf reader returns numpy arrays
     # need to convert them to lists, so it would be compared as plain json
     return {
