@@ -1,19 +1,13 @@
 import pytest
 
-from xmlschema.validators.exceptions import XMLSchemaValidationError
-
 import py_tdf
 
 # Things to check:
-#
-# - нет класса для rod/cable
-# - неправильных классы, нет полей, поля не числа
-# - нет composition
 # - для пары i-j было объявлено два разных соединения
 # - для пары i-j было объявлено одно соединение разных классов
 # - для узла использованного в описании не указана начальная позиция
 # - начальная позиция указана больше одного раза, и с разными значениями
-# - длины rest_length соответствуют указанным позициям
+# - длины rest_length не соответствуют указанным позициям
 
 def test_minimal_correct_tdf():
     # shouldn't raise any error
@@ -38,7 +32,7 @@ def test_minimal_correct_tdf():
 '''.strip())
 
 def test_rod_class_is_absent():
-    with pytest.raises(XMLSchemaValidationError):
+    with pytest.raises(py_tdf.TDFValidationError):
         py_tdf.from_string('''
 <?xml version="1.0"?>
 <tdf>
@@ -59,7 +53,7 @@ def test_rod_class_is_absent():
 '''.strip())
 
 def test_rod_class_not_specified():
-    with pytest.raises(XMLSchemaValidationError):
+    with pytest.raises(py_tdf.TDFValidationError):
         py_tdf.from_string('''
 <?xml version="1.0"?>
 <tdf>
@@ -81,7 +75,7 @@ def test_rod_class_not_specified():
 '''.strip())
 
 def test_rod_class_with_such_name_not_present():
-    with pytest.raises(XMLSchemaValidationError):
+    with pytest.raises(py_tdf.TDFValidationError):
         py_tdf.from_string('''
 <?xml version="1.0"?>
 <tdf>
