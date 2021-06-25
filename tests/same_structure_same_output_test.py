@@ -18,6 +18,7 @@ MATLAB_EXEC_PATH = os.environ['MATLAB_EXEC_PATH']
 # since they describe same structure
 FILES_DESCRIBING_SAME_STURCTURE = [
     ['SixBar_diamond.tdf', 'SixBar_pentagon.tdf', 'SixBar_plain.tdf'],
+    ['SixBar_diamond_classless.tdf', 'SixBar_pentagon_classless.tdf'],
 ]
 
 
@@ -46,17 +47,32 @@ def matlab_read(path):
 
 def python_read(path):
     robot = py_tdf.from_path(path)
-    # python tdf reader returns numpy arrays
-    # need to convert them to lists, so it would be compared as plain json
+    if 'stiffness_coef' in robot:
+        # python tdf reader returns numpy arrays
+        # need to convert them to lists, so it would be compared as plain json
+        return {
+            'Cables': robot['Cables'].tolist(),
+            'Rods': robot['Rods'].tolist(),
+            'Connectivity': robot['Connectivity'].tolist(),
+            'stiffness_coef': robot['stiffness_coef'].tolist(),
+            'rest_lengths': robot['rest_lengths'].tolist(),
+            'nodes_position': robot['nodes_position'].tolist(),
+            'node_ids': robot['node_ids'],
+        }
+
+    # if stiffness_coef is not specified, then we have
+    # tensegrity structure without these properties
+    # only connectivity and coordinates are provided
     return {
         'Cables': robot['Cables'].tolist(),
         'Rods': robot['Rods'].tolist(),
         'Connectivity': robot['Connectivity'].tolist(),
-        'stiffness_coef': robot['stiffness_coef'].tolist(),
-        'rest_lengths': robot['rest_lengths'].tolist(),
         'nodes_position': robot['nodes_position'].tolist(),
         'node_ids': robot['node_ids'],
     }
+
+
+
 
 
 

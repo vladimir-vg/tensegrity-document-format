@@ -4,7 +4,7 @@
     <xs:complexType>
       <xs:all>
 
-        <xs:element name="rod_class" minOccurs="1">
+        <xs:element name="rod_class" minOccurs="0">
           <xs:complexType>
             <xs:attribute name="id" type="xs:string" use="required"/>
             <xs:attribute name="stiffness" type="xs:decimal" use="required"/>
@@ -12,7 +12,7 @@
           </xs:complexType>
         </xs:element>
 
-        <xs:element name="cable_class" minOccurs="1">
+        <xs:element name="cable_class" minOccurs="0">
           <xs:complexType>
             <xs:attribute name="id" type="xs:string" use="required"/>
             <xs:attribute name="stiffness" type="xs:decimal" use="required"/>
@@ -26,7 +26,7 @@
 
               <xs:element name="rod">
                 <xs:complexType>
-                  <xs:attribute name="class" type="xs:string" use="required"/>
+                  <xs:attribute name="class" type="xs:string" use="optional"/>
                   <xs:attribute name="node1" type="xs:string" use="required"/>
                   <xs:attribute name="node2" type="xs:string" use="required"/>
                 </xs:complexType>
@@ -34,7 +34,7 @@
 
               <xs:element name="cable">
                 <xs:complexType>
-                  <xs:attribute name="class" type="xs:string" use="required"/>
+                  <xs:attribute name="class" type="xs:string" use="optional"/>
                   <xs:attribute name="node1" type="xs:string" use="required"/>
                   <xs:attribute name="node2" type="xs:string" use="required"/>
                 </xs:complexType>

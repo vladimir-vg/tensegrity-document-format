@@ -5,6 +5,8 @@ from xmlschema.validators.exceptions import XMLSchemaValidationError
 class TDFValidationError(Exception):
     pass
 
+# TODO: determine absolute path to this file
+# Current relative path probably wouldn't work in some usecases
 PATH_TO_XSD_SCHEMA = 'schema.xsd'
 
 def ensure_all_used_classes_are_defined(root):
@@ -18,9 +20,11 @@ def ensure_all_used_classes_are_defined(root):
     used_rod_classes = set()
     used_cable_classes = set()
     for el in root.findall('composition')[0].findall('rod'):
-        used_rod_classes.add(el.attrib['class'])
+        if 'class' in el.attrib:
+            used_rod_classes.add(el.attrib['class'])
     for el in root.findall('composition')[0].findall('cable'):
-        used_cable_classes.add(el.attrib['class'])
+        if 'class' in el.attrib:
+            used_cable_classes.add(el.attrib['class'])
 
     if not used_rod_classes.issubset(defined_rod_classes):
         raise TDFValidationError()

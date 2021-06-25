@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<tdf xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="diamond" params="a1 a2 b c">
+    <rod node1="${a1}" node2="${a2}" />
+    <cable node1="${a1}" node2="${b}" />
+    <cable node1="${a1}" node2="${c}" />
+    <cable node1="${a2}" node2="${b}" />
+    <cable node1="${a2}" node2="${c}" />
+  </xacro:macro>
+
+  <!-- This diamond macro description is more convenient than pentagon macro,
+       because we don't need to worry about orientation.
+       If we flip a1,a2 or B,C, it still would be correct description.
+       Pentagons are not like that.
+  -->
+
+  <composition>
+    <xacro:diamond a1="6" a2="5" b="1" c="3" />
+    <xacro:diamond a1="11" a2="12" b="6" c="8" />
+    <xacro:diamond a1="9" a2="10" b="5" c="7" />
+    <xacro:diamond a1="2" a2="1" b="11" c="9" />
+    <xacro:diamond a1="3" a2="4" b="12" c="10" />
+    <xacro:diamond a1="8" a2="7" b="4" c="2" />
+  </composition>
+
+  <initial_positions>
+    <node id="1" xyz="-0.25 0 -0.5"/>
+    <node id="2" xyz="-0.25 0 0.5"/>
+    <node id="3" xyz="0.25 0 -0.5"/>
+    <node id="4" xyz="0.25 0 0.5"/>
+
+    <node id="5" xyz="0 -0.5 -0.25"/>
+    <node id="6" xyz="0 0.5 -0.25"/>
+    <node id="7" xyz="0 -0.5 0.25"/>
+    <node id="8" xyz="0 0.5 0.25"/>
+
+    <node id="9" xyz="-0.5 -0.25 0"/>
+    <node id="10" xyz="0.5 -0.25 0"/>
+    <node id="11" xyz="-0.5 0.25 0"/>
+    <node id="12" xyz="0.5 0.25 0"/>
+  </initial_positions>
+</tdf>
