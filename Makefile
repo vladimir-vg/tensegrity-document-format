@@ -15,17 +15,9 @@ generate_tdfs_from_examples: \
 	tests/generated_data/SixBar_pentagon.tdf \
 	tests/generated_data/SixBar_pentagon_classless.tdf
 
-# TODO: find a way to write same without repetitions
-tests/generated_data/SixBar_plain.tdf: examples/SixBar_plain.tdf.xacro
-	xacro examples/SixBar_plain.tdf.xacro > tests/generated_data/SixBar_plain.tdf
-tests/generated_data/SixBar_diamond.tdf: examples/SixBar_diamond.tdf.xacro
-	xacro examples/SixBar_diamond.tdf.xacro > tests/generated_data/SixBar_diamond.tdf
-tests/generated_data/SixBar_diamond_classless.tdf: examples/SixBar_diamond_classless.tdf.xacro
-	xacro examples/SixBar_diamond_classless.tdf.xacro > tests/generated_data/SixBar_diamond_classless.tdf
-tests/generated_data/SixBar_pentagon.tdf: examples/SixBar_pentagon.tdf.xacro
-	xacro examples/SixBar_pentagon.tdf.xacro > tests/generated_data/SixBar_pentagon.tdf
-tests/generated_data/SixBar_pentagon_classless.tdf: examples/SixBar_pentagon_classless.tdf.xacro
-	xacro examples/SixBar_pentagon_classless.tdf.xacro > tests/generated_data/SixBar_pentagon_classless.tdf
+tests/generated_data/%.tdf: examples/%.tdf.xacro
+	# $@ is target value, $< is source file
+	xacro $< > $@
 
 .PHONY: deps test generate_tdfs_from_examples
 
