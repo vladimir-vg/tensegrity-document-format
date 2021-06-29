@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ElementTree
 
+
+
 def extract_classes_with_indexes(prefix, connectivity, stiffness_coef, rest_lengths):
     # key is a tuple with stiffness and rest_length
     # value: list of indexes that have this class
@@ -33,11 +35,10 @@ def extract_classes_with_indexes(prefix, connectivity, stiffness_coef, rest_leng
 
 
 
-def to_xml(data):
-    root = ElementTree.Element('tdf')
-
+def read_classes_and_prepare_elements(root, data):
     rod_classes = None
     cable_classes = None
+    elements_to_create = []
 
     are_classes_used = ('stiffness_coef' in data) and ('rest_lengths' in data)
     if are_classes_used:
@@ -45,22 +46,25 @@ def to_xml(data):
         cable_classes = extract_classes_with_indexes('cable', data['Cables'], data['stiffness_coef'], data['rest_lengths'])
 
         for c in rod_classes:
-            ElementTree.SubElement(root, 'rod_class',
-                id=c['id'], stiffness=c['stiffness'], rest_length=c['rest_length'])
+            elements_to_create.append(('rod_class', {
+                'id': c['id'], 'stiffness': c['stiffness'], 'rest_length': c['rest_length']
+            }))
         for c in cable_classes:
-            ElementTree.SubElement(root, 'cable_class',
-                id=c['id'], stiffness=c['stiffness'], rest_length=c['rest_length'])
+            elements_to_create.append(('cable_class', {
+                'id': c['id'], 'stiffness': c['stiffness'], 'rest_length': c['rest_length']
+            }))
 
+    return rod_classes, cable_classes, elements_to_create
+
+
+
+def prepare_rod_cable_elements(data, index_name_mapping, rod_classes, cable_classes):
+    elements_to_create = []
+
+    are_classes_used = (rod_classes != None)
     n = len(data['Rods'])
-
-    index_name_mapping = None
-    if 'node_ids' in data:
-        index_name_mapping = dict(enumerate(data['node_ids']))
-    else:
-        index_name_mapping = dict([(i, f'node{i}') for i in range(n)])
-
-    composition = ElementTree.SubElement(root, 'composition')
     saved_index_pairs = set()
+
     for i in range(n):
         for j in range(n):
             pair0 = [i,j]
@@ -74,23 +78,57 @@ def to_xml(data):
                 if are_classes_used:
                     [class_item, *rest] = filter(lambda x: pair in x['pairs'], rod_classes)
                     attrs['class'] = class_item['id']
-                ElementTree.SubElement(composition, 'rod', attrs)
+                elements_to_create.append(('rod', attrs))
                 saved_index_pairs.add(pair)
 
             if data['Cables'][i][j] != 0:
                 if are_classes_used:
                     [class_item, *rest] = filter(lambda x: pair in x['pairs'], cable_classes)
                     attrs['class'] = class_item['id']
-                ElementTree.SubElement(composition, 'cable', attrs)
+                elements_to_create.append(('cable', attrs))
                 saved_index_pairs.add(pair)
 
-    initial_positions = ElementTree.SubElement(root, 'initial_positions')
-    for i in range(len(data['nodes_position'][0])):
+    return elements_to_create
+
+
+
+def prepare_position_elements(data, index_name_mapping):
+    elements_to_create = []
+
+    n = len(data['Rods'])
+    for i in range(n):
         id = index_name_mapping[i]
         x = data['nodes_position'][0][i]
         y = data['nodes_position'][1][i]
         z = data['nodes_position'][2][i]
         xyz = f'{x} {y} {z}'
-        ElementTree.SubElement(initial_positions, 'node', id=id, xyz=xyz)
+        elements_to_create.append(('node', {'id': id, 'xyz': xyz}))
+
+    return elements_to_create
+
+
+
+def to_xml(data):
+    root = ElementTree.Element('tdf')
+
+    index_name_mapping = None
+    if 'node_ids' in data:
+        index_name_mapping = dict(enumerate(data['node_ids']))
+    else:
+        index_name_mapping = dict([(i, f'node{i}') for i in range(n)])
+
+    rod_classes, cable_classes, class_elements_to_create = read_classes_and_prepare_elements(root, data)
+    for (name, attrs) in class_elements_to_create:
+        ElementTree.SubElement(root, name, attrs)
+
+    composition = ElementTree.SubElement(root, 'composition')
+    cable_rod_elements_to_create = prepare_rod_cable_elements(data, index_name_mapping, rod_classes, cable_classes)
+    for (name, attrs) in cable_rod_elements_to_create:
+        ElementTree.SubElement(composition, name, attrs)
+
+    position_elements = prepare_position_elements(data, index_name_mapping)
+    initial_positions = ElementTree.SubElement(root, 'initial_positions')
+    for (name, attrs) in position_elements:
+        ElementTree.SubElement(initial_positions, name, attrs)
 
     return ElementTree.tostring(root)
