@@ -34,8 +34,22 @@ def extract_classes_with_indexes(prefix, connectivity, stiffness_coef, rest_leng
 
 
 def to_xml(data):
-    rod_classes = extract_classes_with_indexes('rod', data['Rods'], data['stiffness_coef'], data['rest_lengths'])
-    cable_classes = extract_classes_with_indexes('cable', data['Cables'], data['stiffness_coef'], data['rest_lengths'])
+    root = ElementTree.Element('tdf')
+
+    rod_classes = None
+    cable_classes = None
+
+    are_classes_used = ('stiffness_coef' in data) and ('rest_lengths' in data)
+    if are_classes_used:
+        rod_classes = extract_classes_with_indexes('rod', data['Rods'], data['stiffness_coef'], data['rest_lengths'])
+        cable_classes = extract_classes_with_indexes('cable', data['Cables'], data['stiffness_coef'], data['rest_lengths'])
+
+        for c in rod_classes:
+            ElementTree.SubElement(root, 'rod_class',
+                id=c['id'], stiffness=c['stiffness'], rest_length=c['rest_length'])
+        for c in cable_classes:
+            ElementTree.SubElement(root, 'cable_class',
+                id=c['id'], stiffness=c['stiffness'], rest_length=c['rest_length'])
 
     n = len(data['Rods'])
 
@@ -44,15 +58,6 @@ def to_xml(data):
         index_name_mapping = dict(enumerate(data['node_ids']))
     else:
         index_name_mapping = dict([(i, f'node{i}') for i in range(n)])
-
-    root = ElementTree.Element('tdf')
-
-    for c in rod_classes:
-        ElementTree.SubElement(root, 'rod_class',
-            id=c['id'], stiffness=c['stiffness'], rest_length=c['rest_length'])
-    for c in cable_classes:
-        ElementTree.SubElement(root, 'cable_class',
-            id=c['id'], stiffness=c['stiffness'], rest_length=c['rest_length'])
 
     composition = ElementTree.SubElement(root, 'composition')
     saved_index_pairs = set()
@@ -64,17 +69,19 @@ def to_xml(data):
             if pair in saved_index_pairs:
                 continue
 
+            attrs = {'node1': index_name_mapping[i], 'node2': index_name_mapping[j]}
             if data['Rods'][i][j] != 0:
-                [class_item, *rest] = filter(lambda x: pair in x['pairs'], rod_classes)
-                ElementTree.SubElement(composition, 'rod',
-                    {'node1': index_name_mapping[i], 'node2': index_name_mapping[j],
-                    'class': class_item['id']})
+                if are_classes_used:
+                    [class_item, *rest] = filter(lambda x: pair in x['pairs'], rod_classes)
+                    attrs['class'] = class_item['id']
+                ElementTree.SubElement(composition, 'rod', attrs)
                 saved_index_pairs.add(pair)
+
             if data['Cables'][i][j] != 0:
-                [class_item, *rest] = filter(lambda x: pair in x['pairs'], cable_classes)
-                ElementTree.SubElement(composition, 'cable',
-                    {'node1': index_name_mapping[i], 'node2': index_name_mapping[j],
-                    'class': class_item['id']})
+                if are_classes_used:
+                    [class_item, *rest] = filter(lambda x: pair in x['pairs'], cable_classes)
+                    attrs['class'] = class_item['id']
+                ElementTree.SubElement(composition, 'cable', attrs)
                 saved_index_pairs.add(pair)
 
     initial_positions = ElementTree.SubElement(root, 'initial_positions')

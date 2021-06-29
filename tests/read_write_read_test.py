@@ -18,7 +18,7 @@ MATLAB_EXEC_PATH = os.environ['MATLAB_EXEC_PATH']
 # since they describe same structure
 FILES_DESCRIBING_SAME_STURCTURE = [
     ['SixBar_diamond.tdf', 'SixBar_pentagon.tdf', 'SixBar_plain.tdf'],
-    # ['SixBar_diamond_classless.tdf', 'SixBar_pentagon_classless.tdf'],
+    ['SixBar_diamond_classless.tdf', 'SixBar_pentagon_classless.tdf'],
 ]
 
 
