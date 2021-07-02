@@ -24,7 +24,7 @@ FILES_DESCRIBING_SAME_STURCTURE = [
 
 
 def expand_path(filename):
-    return os.path.abspath(f'tests/generated_data/{filename}')
+    return os.path.abspath(os.path.join(__file__, f'../tests/generated_data/{filename}'))
 
 def matlab_read_write_read(path):
     # matlab prints some useless information on every run, even when ran without GUI.
@@ -85,8 +85,8 @@ def input_paths(request):
 @pytest.fixture
 def all_json_dump_pair_combinations(input_paths):
     # TODO: add outputs from python version of reader to comparison
-    # output_values1 = [(filename, 'matlab', matlab_read_write_read(path)) for (filename, path) in input_paths]
-    output_values1 = []
+    output_values1 = [(filename, 'matlab', matlab_read_write_read(path)) for (filename, path) in input_paths]
+    # output_values1 = []
     output_values2 = [(filename, 'python', python_read_write_read(path)) for (filename, path) in input_paths]
     pairs = itertools.combinations(output_values1 + output_values2, 2)
     return pairs

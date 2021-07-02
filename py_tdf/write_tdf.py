@@ -35,7 +35,7 @@ def extract_classes_with_indexes(prefix, connectivity, stiffness_coef, rest_leng
 
 
 
-def read_classes_and_prepare_elements(root, data):
+def read_classes_and_prepare_elements(data):
     rod_classes = None
     cable_classes = None
     elements_to_create = []
@@ -111,13 +111,15 @@ def prepare_position_elements(data, index_name_mapping):
 def to_xml(data):
     root = ElementTree.Element('tdf')
 
+    n = len(data['Rods'])
+
     index_name_mapping = None
     if 'node_ids' in data:
         index_name_mapping = dict(enumerate(data['node_ids']))
     else:
         index_name_mapping = dict([(i, f'node{i}') for i in range(n)])
 
-    rod_classes, cable_classes, class_elements_to_create = read_classes_and_prepare_elements(root, data)
+    rod_classes, cable_classes, class_elements_to_create = read_classes_and_prepare_elements(data)
     for (name, attrs) in class_elements_to_create:
         ElementTree.SubElement(root, name, attrs)
 
