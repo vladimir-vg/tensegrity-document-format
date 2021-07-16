@@ -1,12 +1,12 @@
 # you can specify explicit path to matlab executable
 # to be used in tests
-MATLAB_EXEC_PATH = matlab
+MATLAB_EXEC_PATH = /mnt/external-hdd-seagate-ultra-slim/matlab_installation/bin/matlab
 
 deps:
 	pip3 install -r requirements.txt
 
 test: generate_tdfs_from_examples
-	PYTHONPATH=`pwd` MATLAB_EXEC_PATH=$(MATLAB_EXEC_PATH) pytest tests/read_write_read_test.py
+	PYTHONPATH=`pwd` MATLAB_EXEC_PATH=$(MATLAB_EXEC_PATH) pytest tests
 
 generate_tdfs_from_examples: \
 	tests/generated_data/SixBar_plain.tdf \

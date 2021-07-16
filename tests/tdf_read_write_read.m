@@ -1,4 +1,4 @@
-function xmltext = tdf_read_write_read(path)
+function tdf_read_write_read(path)
   %% add root directory to load path, so function read_tdf could be loaded
   userpath(strcat(pwd, '/../matlab_src'));
 
